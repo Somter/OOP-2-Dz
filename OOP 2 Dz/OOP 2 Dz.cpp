@@ -6,8 +6,8 @@ using namespace std;
 
 int main()
 {
-	system("chcp 1251");
-
+	system("chcp 1251");	
+		
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
