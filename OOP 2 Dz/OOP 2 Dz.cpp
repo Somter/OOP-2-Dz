@@ -63,6 +63,10 @@ public:
             cout << "--------------------" << endl;
         }
     } 
+    void SaveToFile(FILE* saveFile) 
+    {
+        fprintf(saveFile, "%s %s %s %s %s\n", FIO, homePhone, workPhone, mobilePhone, additionalInform);
+    }
     void Print() {
         cout << "--------------------" << endl;
         cout << "ФИО: " << FIO << endl;
@@ -94,8 +98,9 @@ int main() {
     char mobilePhone[20];
     char additionalInform[20];
     char workPhone[50];
-    int choise;
-
+    int choise;  
+    FILE* file = nullptr;
+    const char* filename = "datafile.txt";  
     do {
         cout << "Выберите действие: " << endl;
         cout << "1 - Добавить нового абонента" << endl;
@@ -107,7 +112,6 @@ int main() {
         cout << "7 - Выход" << endl;
         cout << "Ваш выбор: ";
         cin >> choise;
-
         switch (choise) {
         case 1:
             if (numSubscribers < MaxSubscribers) {
@@ -160,6 +164,45 @@ int main() {
                 numSubscribers--;   
             }
             break;
+        case 5:
+            file = fopen(filename, "r");
+            if (!file) {
+                cout << "Ошибка открытия файла." << endl;
+                break;
+            }
+            char fio[40];
+            char homePhone[20];
+            char workPhone[50];
+            char mobilePhone[20];
+            char additionalInform[20];
+
+            while (fscanf(file, "%s %s %s %s %s\n", fio, homePhone, workPhone, mobilePhone, additionalInform) != EOF) {
+                if (numSubscribers < MaxSubscribers) {
+                    subscribers[numSubscribers] = new Person(fio, homePhone, workPhone, mobilePhone, additionalInform);
+                    numSubscribers++;
+                }
+                else {
+                    cout << "Достигнуто максимальное количество абонентов." << endl;
+                    break;
+                }
+            }
+            fclose(file);
+            cout << "Данные успешно загружены из файла." << endl;
+            break;
+        case 6:
+            FILE* saveFile = fopen(filename, "w");  
+            if (!saveFile) {
+                cout << "Ошибка создания файла." << endl;
+                break;
+            }
+
+            for (int i = 0; i < numSubscribers; i++) {
+                subscribers[i]->SaveToFile(saveFile);   
+            }
+
+            fclose(saveFile);
+            cout << "Данные успешно сохранены в файл." << endl; 
+            break;  
         }   
     } while (choise != 7);  
 
